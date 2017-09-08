@@ -1,6 +1,13 @@
 cmake_minimum_required(VERSION 3.1)
 project(docopt.cpp VERSION 0.6.2)
 
+###############
+# ASI default settings
+list(APPEND CMAKE_MODULE_PATH "$ENV{ASV_CMAKE}")
+include(asv_cmake_defaults)
+asv_cmake_defaults( )
+###############
+
 include(GNUInstallDirs)
 
 #============================================================================
