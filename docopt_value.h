@@ -30,7 +30,7 @@ namespace docopt {
 	/// This type can be one of: {bool, long, string, vector<string>}, or empty.
 	struct value {
 		/// An empty value
-		value() {}
+		value() = default;
 
 		value(std::string);
 		value(std::vector<std::string>);
