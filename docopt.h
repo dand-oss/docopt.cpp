@@ -84,11 +84,12 @@ namespace docopt {
 	///  * DocoptExitHelp - print usage string and terminate (with exit code 0)
 	///  * DocoptExitVersion - print version and terminate (with exit code 0)
 	///  * DocoptArgumentError - print error and usage string and terminate (with exit code -1)
+    ////  ALL THESE NOW THROW std::runtime error - can't exit!!!!
 	Options DOCOPT_API docopt(std::string const& doc,
 					    std::vector<std::string> const& argv,
 					    bool help = true,
 					    std::string const& version = {},
-					    bool options_first = false) noexcept;
+					    bool options_first = false) ;
 }
 
 #ifdef DOCOPT_HEADER_ONLY
