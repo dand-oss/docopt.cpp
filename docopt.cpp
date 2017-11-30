@@ -20,6 +20,7 @@
 #include <iostream>
 #include <cassert>
 #include <cstddef>
+#include <sstream>
 
 using namespace docopt;
 
@@ -664,24 +665,24 @@ docopt::docopt(std::string const& doc,
 	       std::vector<std::string> const& argv,
 	       bool help,
 	       std::string const& version,
-	       bool options_first) noexcept
+	       bool options_first) // throws
 {
 	try {
 		return docopt_parse(doc, argv, help, !version.empty(), options_first);
 	} catch (DocoptExitHelp const&) {
-		std::cout << doc << std::endl;
-		std::exit(0);
+        throw std::runtime_error( doc ) ;
 	} catch (DocoptExitVersion const&) {
-		std::cout << version << std::endl;
-		std::exit(0);
+        throw std::runtime_error( version ) ;
 	} catch (DocoptLanguageError const& error) {
-		std::cerr << "Docopt usage string could not be parsed" << std::endl;
-		std::cerr << error.what() << std::endl;
-		std::exit(-1);
+        std::ostringstream ostr ;
+        ostr << "Docopt usage string could not be parsed" << std::endl;
+        ostr << error.what() ;
+        throw std::runtime_error( ostr.str() ) ;
 	} catch (DocoptArgumentError const& error) {
-		std::cerr << error.what();
-		std::cout << std::endl;
-		std::cout << doc << std::endl;
-		std::exit(-1);
+        std::ostringstream ostr ;
+		ostr << error.what();
+		ostr << std::endl;
+		ostr << doc ;
+        throw std::runtime_error( ostr.str() ) ;
 	} /* Any other exception is unexpected: let std::terminate grab it */
 }
