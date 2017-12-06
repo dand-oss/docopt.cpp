@@ -34,6 +34,7 @@
     #endif
 #endif
 
+#define DOCOPT_API /// before docopt_value.h
 #include "docopt_value.h"
 
 #include <map>
