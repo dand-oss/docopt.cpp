@@ -96,7 +96,7 @@ if(USE_BOOST_REGEX)
     set(Boost_USE_MULTITHREADED ON)
     # turn on __declspec(dllimport) modifiers
     # Find boost in "module" mode, not CONFIG mode - not BoostConfig.cmake
-    find_package(Boost 1.72.0 EXACT REQUIRED COMPONENTS
+    find_package(Boost 1.74.0 EXACT REQUIRED COMPONENTS
         regex
         )
 
