@@ -15,7 +15,7 @@ include(GNUInstallDirs)
 #============================================================================
 option(WITH_TESTS "Build tests." OFF)
 option(WITH_EXAMPLE "Build example." OFF)
-option(USE_BOOST_REGEX "Replace std::regex with Boost.Regex" OFF)
+option(USE_BOOST_REGEX "Replace std::regex with Boost.Regex" ON)
 
 #============================================================================
 # Internal compiler options
@@ -56,13 +56,35 @@ endif(WIN32)
 target_include_directories(docopt PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:include/docopt>)
 
 if(USE_BOOST_REGEX)
-	add_definitions("-DDOCTOPT_USE_BOOST_REGEX")
-	# This is needed on Linux, where linking a static library into docopt.so
-	# fails because boost static libs are not compiled with -fPIC
-	set(Boost_USE_STATIC_LIBS OFF)
-    find_package(Boost 1.53 REQUIRED COMPONENTS regex)
-    include_directories(${Boost_INCLUDE_DIRS})
-    target_link_libraries(docopt ${Boost_LIBRARIES})
+    add_definitions("-DDOCTOPT_USE_BOOST_REGEX")
+
+    # find boost
+    ##Set(Boost_DEBUG ON)
+    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+        Set(Boost_COMPILER "-clang40") # doh!
+    endif()
+    if(NOT BOOST_ROOT)
+      set(BOOST_ROOT $ENV{BOOST_ROOT} CACHE PATH "Boost Root Directory")
+    endif(NOT BOOST_ROOT)
+    set(Boost_NO_SYSTEM_PATHS ON)
+    if(USE_STATIC_BOOST)
+        # static boost on windows add "lib" prefix
+        # thus can coexist with dll version
+        set(Boost_USE_STATIC_LIBS ON)
+    else()
+        set(Boost_USE_STATIC_LIBS OFF)
+        add_definitions("-DBOOST_ALL_DYN_LINK")
+    endif()
+    set(Boost_USE_MULTITHREADED ON)
+    # turn on __declspec(dllimport) modifiers
+    # Find boost in "module" mode, not CONFIG mode - not BoostConfig.cmake
+    find_package(Boost 1.78.0 EXACT REQUIRED COMPONENTS
+        regex
+        )
+    target_link_libraries(docopt PUBLIC Boost::regex)
+ 	if(WITH_STATIC)
+        target_link_libraries(docopt_s PRIVATE Boost::regex)
+    endif()
 endif()
 
 #============================================================================
