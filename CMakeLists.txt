@@ -15,7 +15,7 @@ include(GNUInstallDirs)
 #============================================================================
 option(WITH_TESTS "Build tests." OFF)
 option(WITH_EXAMPLE "Build example." OFF)
-option(USE_BOOST_REGEX "Replace std::regex with Boost.Regex" OFF)
+option(USE_BOOST_REGEX "Replace std::regex with Boost.Regex" ON)
 
 #============================================================================
 # Internal compiler options
@@ -41,7 +41,10 @@ set(docopt_HEADERS
 #============================================================================
 # Compile targets
 #============================================================================
-add_library(docopt SHARED ${docopt_SOURCES} ${docopt_HEADERS})
+add_library(docopt SHARED)
+target_link_libraries(docopt PUBLIC Boost::regex)
+target_sources(docopt PRIVATE ${docopt_SOURCES} ${docopt_HEADERS})
+
 set_target_properties(docopt PROPERTIES
   VERSION ${PROJECT_VERSION}
   SOVERSION ${PROJECT_VERSION_MAJOR}
@@ -56,14 +59,10 @@ endif(WIN32)
 target_include_directories(docopt PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:include/docopt>)
 
 if(USE_BOOST_REGEX)
-	add_definitions("-DDOCTOPT_USE_BOOST_REGEX")
-	# This is needed on Linux, where linking a static library into docopt.so
-	# fails because boost static libs are not compiled with -fPIC
-	set(Boost_USE_STATIC_LIBS OFF)
-    find_package(Boost 1.53 REQUIRED COMPONENTS regex)
-    include_directories(${Boost_INCLUDE_DIRS})
-    target_link_libraries(docopt ${Boost_LIBRARIES})
-endif()
+    add_definitions("-DDOCTOPT_USE_BOOST_REGEX")
+    list(APPEND CMAKE_PREFIX_PATH ${ASV_PLAT_PORTS}/boost)
+    find_package(Boost CONFIG REQUIRED COMPONENTS Regex)
+endif(USE_BOOST_REGEX)
 
 #============================================================================
 # Examples
