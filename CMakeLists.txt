@@ -41,22 +41,19 @@ set(docopt_HEADERS
 #============================================================================
 # Compile targets
 #============================================================================
-add_library(docopt ${docopt_SOURCES} ${docopt_HEADERS})
+add_library(docopt SHARED ${docopt_SOURCES} ${docopt_HEADERS})
 set_target_properties(docopt PROPERTIES
   VERSION ${PROJECT_VERSION}
   SOVERSION ${PROJECT_VERSION_MAJOR}
 )
+if (WIN32)
+    set_target_properties(docopt PROPERTIES WINDOWS_EXPORT_ALL_SYMBOLS ON)
+else (WIN32)
+    # Linux
+    set_target_properties(docopt PROPERTIES POSITION_INDEPENDENT_CODE ON)
+endif(WIN32)
 
 target_include_directories(docopt PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:include/docopt>)
-
-if(MSVC AND BUILD_SHARED_LIBS)
-    # DOCOPT_DLL: Must be specified when building *and* when using the DLL.
-    #             That's what the "PUBLIC" means.
-    # DOCOPT_EXPORTS: Must use __declspec(dllexport) when building the DLL.
-    #                 "PRIVATE" means it's only defined when building the DLL.
-    target_compile_definitions(docopt PUBLIC  DOCOPT_DLL
-                                      PRIVATE DOCOPT_EXPORTS)
-endif()
 
 if(USE_BOOST_REGEX)
 	add_definitions("-DDOCTOPT_USE_BOOST_REGEX")
