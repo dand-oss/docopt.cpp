@@ -25,6 +25,14 @@
 using namespace docopt;
 
 DOCOPT_INLINE
+std::string docopt::value::cvtString() const
+{
+    std::ostringstream ostr ;
+    ostr << *this ;
+    return ostr.str();
+}
+
+DOCOPT_INLINE
 std::ostream& docopt::operator<<(std::ostream& os, value const& val)
 {
 	if (val.isBool()) {
