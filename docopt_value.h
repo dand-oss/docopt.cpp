@@ -336,6 +336,18 @@ namespace docopt {
 	{
 		return !(v1 == v2);
 	}
-}
+
+	DOCOPT_API std::string cvtString( const value&) ;
+} // namespace
+
+#include <fmt/format.h>
+
+// specialized fmtlib formatter
+template <> struct fmt::formatter<docopt::value>: formatter<string_view> {
+  // parse is inherited from formatter<string_view>.
+  template <typename FormatContext>
+  auto format(const docopt::value& dval, FormatContext& ctx) {
+    return formatter<string_view>::format(docopt::cvtString(dval), ctx);
+  }
 
 #endif /* defined(docopt__value_h_) */

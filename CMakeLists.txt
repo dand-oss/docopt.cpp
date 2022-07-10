@@ -41,7 +41,12 @@ set(docopt_HEADERS
 #============================================================================
 # Compile targets
 #============================================================================
+find_package(fmt CONFIG REQUIRED)
+asv_print_package_properties(
+    fmt::fmt
+    )
 add_library(docopt SHARED ${docopt_SOURCES} ${docopt_HEADERS})
+target_link_libraries(docopt PUBLIC fmt::fmt)
 set_target_properties(docopt PROPERTIES
   VERSION ${PROJECT_VERSION}
   SOVERSION ${PROJECT_VERSION_MAJOR}
@@ -81,11 +86,14 @@ if(USE_BOOST_REGEX)
     find_package(Boost 1.78.0 EXACT REQUIRED COMPONENTS
         regex
         )
+    asv_print_package_properties(
+        Boost::regex
+        )
     target_link_libraries(docopt PUBLIC Boost::regex)
  	if(WITH_STATIC)
         target_link_libraries(docopt_s PRIVATE Boost::regex)
-    endif()
-endif()
+ 	endif(WITH_STATIC)
+endif(USE_BOOST_REGEX)
 
 #============================================================================
 # Examples

@@ -24,6 +24,37 @@
 
 using namespace docopt;
 
+std::string docopt::cvtString(const docopt::value&)
+{
+    fmt::buffer buf ;
+    if (val.isBool()) {
+        bool b = val.asBool();
+        fmt::format_to(std::back_inserter(buf), "{}", b ? "true" : "false");
+    } else if (val.isLong()) {
+        long v = val.asLong();
+        fmt::format_to(std::back_inserter(buf), "{}", v);
+    } else if (val.isString()) {
+        std::string const& str = val.asString();
+        fmt::format_to(std::back_inserter(buf), "\"{}\"", str);
+    } else if (val.isStringList()) {
+        auto const& list = val.asStringList();
+        fmt::format_to(std::back_inserter(buf), "[" );
+        bool first = true;
+        for(auto const& el : list) {
+            if (first) {
+                first = false;
+            } else {
+            fmt::format_to(std::back_inserter(buf), ", ");
+            }
+            fmt::format_to(std::back_inserter(buf), "\"{}\"" el );
+        }
+        fmt::format_to(std::back_inserter(buf), "]");
+    } else {
+    fmt::format_to(std::back_inserter(buf), "null");
+    }
+    return fmt::to_string(buf);
+}
+
 DOCOPT_INLINE
 std::ostream& docopt::operator<<(std::ostream& os, value const& val)
 {
