@@ -46,6 +46,7 @@ namespace docopt {
 		value& operator=(value&&) noexcept;
 
 		Kind kind() const { return kind_; }
+	    std::string cvtString() const;
 		
 		// Test if this object has any contents at all
 		explicit operator bool() const { return kind_ != Kind::Empty; }
@@ -106,7 +107,7 @@ namespace docopt {
 
 	/// Write out the contents to the ostream
 	DOCOPT_API std::ostream& operator<<(std::ostream&, value const&);
-}
+} // namespace docopt
 
 namespace std {
 	template <>
