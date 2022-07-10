@@ -25,6 +25,28 @@
 using namespace docopt;
 
 DOCOPT_INLINE
+std::string docopt::value::cvtString() const
+{
+    std::ostringstream os ;
+
+    if (isBool()) {
+        os << asBool();
+    } else if (isLong()) {
+        os << asLong();
+    } else if (isString()) {
+        // don't quote
+        os << asString();
+    } else if (isStringList()) {
+        // call the other one
+        os << *this ;
+    } else {
+        os << "null";
+    }
+
+    return os.str();
+}
+
+DOCOPT_INLINE
 std::ostream& docopt::operator<<(std::ostream& os, value const& val)
 {
 	if (val.isBool()) {
