@@ -41,7 +41,10 @@ set(docopt_HEADERS
 #============================================================================
 # Compile targets
 #============================================================================
-add_library(docopt SHARED ${docopt_SOURCES} ${docopt_HEADERS})
+add_library(docopt SHARED)
+target_link_libraries(docopt PUBLIC Boost::regex)
+target_sources(docopt PRIVATE ${docopt_SOURCES} ${docopt_HEADERS})
+
 set_target_properties(docopt PROPERTIES
   VERSION ${PROJECT_VERSION}
   SOVERSION ${PROJECT_VERSION_MAJOR}
@@ -57,37 +60,8 @@ target_include_directories(docopt PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}
 
 if(USE_BOOST_REGEX)
     add_definitions("-DDOCTOPT_USE_BOOST_REGEX")
-
-    # find boost
-    ##Set(Boost_DEBUG ON)
-    if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-        Set(Boost_COMPILER "-clang40") # doh!
-    endif()
-    if(NOT BOOST_ROOT)
-      set(BOOST_ROOT $ENV{BOOST_ROOT} CACHE PATH "Boost Root Directory")
-    endif(NOT BOOST_ROOT)
-    set(Boost_NO_SYSTEM_PATHS ON)
-    if(USE_STATIC_BOOST)
-        # static boost on windows add "lib" prefix
-        # thus can coexist with dll version
-        set(Boost_USE_STATIC_LIBS ON)
-    else()
-        set(Boost_USE_STATIC_LIBS OFF)
-        add_definitions("-DBOOST_ALL_DYN_LINK")
-    endif()
-    set(Boost_USE_MULTITHREADED ON)
-    # turn on __declspec(dllimport) modifiers
-    # Find boost in "module" mode, not CONFIG mode - not BoostConfig.cmake
-    find_package(Boost 1.78.0 EXACT REQUIRED COMPONENTS
-        regex
-        )
-    asv_print_package_properties(
-        Boost::regex
-        )
-    target_link_libraries(docopt PUBLIC Boost::regex)
- 	if(WITH_STATIC)
-        target_link_libraries(docopt_s PRIVATE Boost::regex)
-    endif(WITH_STATIC)
+    list(APPEND CMAKE_PREFIX_PATH ${ASV_PLAT_PORTS}/boost)
+    find_package(Boost CONFIG REQUIRED COMPONENTS Regex)
 endif(USE_BOOST_REGEX)
 
 #============================================================================
