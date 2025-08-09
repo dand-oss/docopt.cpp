@@ -60,8 +60,10 @@ target_include_directories(docopt PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}
 
 if(USE_BOOST_REGEX)
     add_definitions("-DDOCTOPT_USE_BOOST_REGEX")
-    list(APPEND CMAKE_PREFIX_PATH ${ASV_PLAT_PORTS}/boost)
-    find_package(Boost CONFIG REQUIRED COMPONENTS Regex)
+    find_package(Boost CONFIG REQUIRED
+        PATHS ${ASV_PLAT_PORTS}/boost NO_DEFAULT_PATH
+        COMPONENTS
+        Regex)
 endif(USE_BOOST_REGEX)
 
 #============================================================================
