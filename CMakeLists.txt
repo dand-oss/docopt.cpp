@@ -56,7 +56,7 @@ else (WIN32)
     set_target_properties(docopt PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif(WIN32)
 
-target_include_directories(docopt PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:include/docopt>)
+target_include_directories(docopt PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:include>)
 
 if(USE_BOOST_REGEX)
     add_definitions("-DDOCTOPT_USE_BOOST_REGEX")
